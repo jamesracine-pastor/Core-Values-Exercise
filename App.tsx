@@ -88,7 +88,6 @@ function buildReflection(values) {
 
   return `It seems that God has wired you with a deep orientation toward ${joined}. You have a unique God-given design to embody these values in the way you love, serve, and lead others. The patterns in your choices suggest that you come alive when your convictions and your contribution are closely aligned. ${actionLine}`;
 }
-
 function ValueChip({ label, active, onClick, draggable = false, onDragStart }) {
   return (
     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="inline-block">
@@ -97,7 +96,11 @@ function ValueChip({ label, active, onClick, draggable = false, onDragStart }) {
         draggable={draggable}
         onDragStart={onDragStart}
         onClick={onClick}
-        className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-all ${active ? "border-slate-900 bg-slate-900 text-white shadow" : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"}`}
+        className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-all ${
+          active
+            ? "border-slate-900 bg-slate-900 text-white shadow"
+            : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"
+        }`}
       >
         {draggable && <GripVertical className="h-3.5 w-3.5 opacity-70" />}
         <span>{label}</span>
@@ -106,7 +109,6 @@ function ValueChip({ label, active, onClick, draggable = false, onDragStart }) {
     </motion.div>
   );
 }
-
 function Column({ title, description, items, onDropItem, onItemClick, emptyText, variant = "primary" }) {
   return (
     <div
