@@ -12,9 +12,13 @@ function AllPeoplesLogo() {
   return (
     <div className="flex justify-center">
       <div className="relative flex h-56 w-56 items-center justify-center rounded-full border-[6px] border-slate-900 text-slate-900 md:h-72 md:w-72">
-        <div className="translate-y-1 px-8 text-center leading-none md:translate-y-2">
-          <div className="text-[1.4rem] font-black tracking-[0.08em] md:text-[2.05rem]">ALLPEOPLES</div>
-          <div className="mt-2 text-[0.8rem] font-bold tracking-[0.55em] md:text-[1rem]">TWIN CITIES</div>
+        <div className="text-center leading-none px-8 translate-y-1 md:translate-y-2">
+          <div className="text-[1.4rem] font-black tracking-[0.08em] md:text-[2.05rem]">
+            ALLPEOPLES
+          </div>
+          <div className="mt-2 text-[0.8rem] font-bold tracking-[0.55em] md:text-[1rem]">
+            TWIN CITIES
+          </div>
         </div>
       </div>
     </div>
@@ -33,7 +37,7 @@ const STEPS = [
   { id: 5, title: "Final reflection", subtitle: "From these, choose the three values that best capture your core design." },
 ];
 
-const getEffectiveStep = ({ step, step2Keep, top10, top5 }: { step: number; step2Keep: string[]; top10: string[]; top5: string[]; }) => {
+const getEffectiveStep = ({ step, step2Keep, top10, top5 }) => {
   if (step <= 1) return 1;
   if (step === 2) return 2;
   if (step === 3) return 3;
@@ -45,31 +49,65 @@ const getEffectiveStep = ({ step, step2Keep, top10, top5 }: { step: number; step
   return 1;
 };
 
-function titleCase(value: string) {
+function titleCase(value) {
   return value
     .split(" ")
     .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : ""))
     .join(" ");
 }
 
-function ValueChip({ label, active, onClick, draggable = false, onDragStart }: { label: string; active?: boolean; onClick: () => void; draggable?: boolean; onDragStart?: (e: React.DragEvent<HTMLButtonElement>) => void; }) {
+function buildReflection(values) {
+  if (values.length === 0) return "";
+  const joined = values.length === 1 ? values[0] : values.length === 2 ? `${values[0]} and ${values[1]}` : `${values[0]}, ${values[1]}, and ${values[2]}`;
+  const actionMap = {
+    Service: "serving others in practical, compassionate ways",
+    Serving: "serving others in practical, compassionate ways",
+    Leadership: "guiding people, casting vision, and building healthy teams",
+    Compassion: "caring for hurting people with tenderness and action",
+    Prayer: "interceding, listening, and creating space to seek God",
+    Worship: "creating environments that help people turn their attention toward God",
+    Mentoring: "investing in people one-to-one and helping them grow",
+    Teaching: "explaining truth clearly and helping others understand",
+    Justice: "pursuing what is right, fair, and restorative",
+    "Social Justice": "advocating for dignity, mercy, and restoration in the world",
+    Missions: "crossing boundaries to bring hope, service, and the gospel",
+    Creativity: "making, imagining, and bringing fresh ideas into the world",
+    Art: "expressing beauty, truth, and meaning through creative work",
+    Music: "using sound, rhythm, and song to bless and strengthen others",
+    Faith: "trusting God deeply and helping others do the same",
+    "The Poor": "moving toward the overlooked with compassion and practical care",
+    "The Church": "strengthening the body of Christ and building community",
+    Entrepreneurship: "starting, building, and stewarding new ventures with courage",
+    Growth: "cultivating continual maturity, learning, and transformation",
+    Hospitality: "welcoming people and helping them feel seen and at home",
+  };
+  const matchedActions = values.map((v) => actionMap[v]).filter(Boolean);
+  const actionLine = matchedActions.length
+    ? `You might find vocational fulfillment when ${matchedActions.slice(0, 2).join(" and ")}.`
+    : "You might find vocational fulfillment in work that lets you contribute meaningfully, care deeply, and live with integrity.";
+
+  return `It seems that God has wired you with a deep orientation toward ${joined}. You have a unique God-given design to embody these values in the way you love, serve, and lead others. The patterns in your choices suggest that you come alive when your convictions and your contribution are closely aligned. ${actionLine}`;
+}
+
+function ValueChip({ label, active, onClick, draggable = false, onDragStart }) {
   return (
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      draggable={draggable}
-      onDragStart={onDragStart}
-      onClick={onClick}
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-all ${active ? "border-slate-900 bg-slate-900 text-white shadow" : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"}`}
-    >
-      {draggable && <GripVertical className="h-3.5 w-3.5 opacity-70" />}
-      <span>{label}</span>
-      {active && <Check className="h-3.5 w-3.5" />}
-    </motion.button>
+    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="inline-block">
+      <button
+        type="button"
+        draggable={draggable}
+        onDragStart={onDragStart}
+        onClick={onClick}
+        className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-all ${active ? "border-slate-900 bg-slate-900 text-white shadow" : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"}`}
+      >
+        {draggable && <GripVertical className="h-3.5 w-3.5 opacity-70" />}
+        <span>{label}</span>
+        {active && <Check className="h-3.5 w-3.5" />}
+      </button>
+    </motion.div>
   );
 }
 
-function Column({ title, description, items, onDropItem, onItemClick, emptyText, variant = "primary" }: { title: string; description: string; items: string[]; onDropItem: (item: string) => void; onItemClick: (item: string) => void; emptyText: string; variant?: "primary" | "secondary"; }) {
+function Column({ title, description, items, onDropItem, onItemClick, emptyText, variant = "primary" }) {
   return (
     <div
       onDragOver={(e) => e.preventDefault()}
@@ -90,17 +128,18 @@ function Column({ title, description, items, onDropItem, onItemClick, emptyText,
 
 export default function CoreValuesExercise() {
   const [step, setStep] = useState(1);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState([]);
   const [customValue, setCustomValue] = useState("");
-  const [step2Keep, setStep2Keep] = useState<string[]>([]);
-  const [step2SetAside, setStep2SetAside] = useState<string[]>([]);
-  const [top10, setTop10] = useState<string[]>([]);
-  const [top5, setTop5] = useState<string[]>([]);
-  const [top3, setTop3] = useState<string[]>([]);
+  const [step2Keep, setStep2Keep] = useState([]);
+  const [step2SetAside, setStep2SetAside] = useState([]);
+  const [top10, setTop10] = useState([]);
+  const [top5, setTop5] = useState([]);
+  const [top3, setTop3] = useState([]);
 
   const effectiveStep = useMemo(() => getEffectiveStep({ step, step2Keep, top10, top5 }), [step, step2Keep, top10, top5]);
   const progress = useMemo(() => (effectiveStep / STEPS.length) * 100, [effectiveStep]);
   const halfTarget = useMemo(() => Math.max(1, Math.ceil(selected.length / 2)), [selected]);
+  const reflection = useMemo(() => buildReflection(top3), [top3]);
 
   const buildChatGPTLink = () => {
     if (top3.length !== 3) return "";
@@ -116,20 +155,20 @@ export default function CoreValuesExercise() {
     setCustomValue("");
   };
 
-  const toggleSelected = (value: string) => setSelected((prev) => prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value].sort((a, b) => a.localeCompare(b)));
+  const toggleSelected = (value) => setSelected((prev) => prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value].sort((a, b) => a.localeCompare(b)));
   const startStep2 = () => { setStep2Keep([...selected]); setStep2SetAside([]); setStep(2); };
-  const moveToKeep = (item: string) => { setStep2SetAside((prev) => prev.filter((v) => v !== item)); setStep2Keep((prev) => [...prev, item].sort((a, b) => a.localeCompare(b))); };
-  const moveToSetAside = (item: string) => { setStep2Keep((prev) => prev.filter((v) => v !== item)); setStep2SetAside((prev) => [...prev, item].sort((a, b) => a.localeCompare(b))); };
+  const moveToKeep = (item) => { setStep2SetAside((prev) => prev.filter((v) => v !== item)); setStep2Keep((prev) => [...prev, item].sort((a, b) => a.localeCompare(b))); };
+  const moveToSetAside = (item) => { setStep2Keep((prev) => prev.filter((v) => v !== item)); setStep2SetAside((prev) => [...prev, item].sort((a, b) => a.localeCompare(b))); };
   const startStep3 = () => {
     if (step2Keep.length <= 5) { setTop10([...step2Keep]); setTop5([...step2Keep]); setTop3([]); setStep(5); return; }
     if (step2Keep.length <= 10) { setTop10([...step2Keep]); setTop5([]); setTop3([]); setStep(4); return; }
     setTop10([]); setTop5([]); setTop3([]); setStep(3);
   };
-  const toggleTop10 = (item: string) => setTop10((prev) => prev.includes(item) ? prev.filter((v) => v !== item) : prev.length >= 10 ? prev : [...prev, item]);
+  const toggleTop10 = (item) => setTop10((prev) => prev.includes(item) ? prev.filter((v) => v !== item) : prev.length >= 10 ? prev : [...prev, item]);
   const startStep4 = () => { if (top10.length <= 5) { setTop5([...top10]); setTop3([]); setStep(5); return; } setTop5([]); setTop3([]); setStep(4); };
-  const toggleTop5 = (item: string) => setTop5((prev) => prev.includes(item) ? prev.filter((v) => v !== item) : prev.length >= 5 ? prev : [...prev, item]);
+  const toggleTop5 = (item) => setTop5((prev) => prev.includes(item) ? prev.filter((v) => v !== item) : prev.length >= 5 ? prev : [...prev, item]);
   const startStep5 = () => { setTop3([]); setStep(5); };
-  const toggleTop3 = (item: string) => setTop3((prev) => prev.includes(item) ? prev.filter((v) => v !== item) : prev.length >= 3 ? prev : [...prev, item]);
+  const toggleTop3 = (item) => setTop3((prev) => prev.includes(item) ? prev.filter((v) => v !== item) : prev.length >= 3 ? prev : [...prev, item]);
   const resetAll = () => { setStep(1); setSelected([]); setCustomValue(""); setStep2Keep([]); setStep2SetAside([]); setTop10([]); setTop5([]); setTop3([]); };
 
   const downloadResults = () => {
@@ -141,6 +180,8 @@ export default function CoreValuesExercise() {
       `Focused list: ${top10.join(", ")}`,
       `Strongest themes: ${top5.join(", ")}`,
       `Final values: ${top3.join(", ")}`,
+      "",
+      reflection,
       "",
       '“The place God calls you to is the place where your deep gladness and the world’s deep hunger meet.” — Frederick Buechner',
     ].join("\n");
@@ -176,10 +217,7 @@ export default function CoreValuesExercise() {
           <Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60">
             <CardHeader><CardTitle className="text-lg">Your summary</CardTitle><CardDescription>Watch your list become clearer as you go.</CardDescription></CardHeader>
             <CardContent className="space-y-4 text-sm">
-              {["Selected words", "After first refinement", "Focused list", "Strongest themes", "Final values"].map((label, index) => {
-                const counts = [selected.length, step2Keep.length, top10.length, top5.length, top3.length];
-                return <div key={label} className="flex items-center justify-between rounded-2xl bg-slate-50 p-3"><span className="text-slate-500">{label}</span><Badge className="rounded-full">{counts[index]}</Badge></div>;
-              })}
+              {[["Selected words", selected.length],["After first refinement", step2Keep.length],["Focused list", top10.length],["Strongest themes", top5.length],["Final values", top3.length]].map(([label, count]) => <div key={label} className="flex items-center justify-between rounded-2xl bg-slate-50 p-3"><span className="text-slate-500">{label}</span><Badge variant="secondary" className="rounded-full">{count}</Badge></div>)}
               <Separator />
               {top3.length > 0 ? <div><div className="mb-2 font-medium text-slate-700">Current reflection set</div><div className="flex flex-wrap gap-2">{top3.map((item) => <Badge key={item} className="rounded-full px-3 py-1 text-sm">{item}</Badge>)}</div></div> : <p className="text-slate-500">Your final reflection words will appear here as the exercise unfolds.</p>}
             </CardContent>
@@ -187,21 +225,28 @@ export default function CoreValuesExercise() {
         </motion.div>
 
         <AnimatePresence mode="wait">
-          {step === 1 && <motion.div key="step1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-6"><div><div className="mb-3 flex items-center justify-between gap-4"><div><h3 className="font-semibold text-slate-900">Master word bank</h3><p className="text-sm text-slate-500">Click every word that resonates with you.</p></div><Badge className="rounded-full px-3 py-1">{selected.length} selected</Badge></div><div className="flex flex-wrap gap-2">{MASTER_VALUES.map((value) => <ValueChip key={value} label={value} active={selected.includes(value)} onClick={() => toggleSelected(value)} />)}{selected.filter((value) => !MASTER_VALUES.includes(value)).map((value) => <ValueChip key={value} label={value} active onClick={() => toggleSelected(value)} />)}</div></div><div className="rounded-2xl border bg-slate-50 p-4"><div className="mb-3"><h3 className="font-semibold text-slate-900">Write your own value</h3><p className="text-sm text-slate-500">Add a word or phrase that is not already in the word bank.</p></div><div className="flex flex-col gap-3 sm:flex-row"><Input value={customValue} onChange={(e) => setCustomValue(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addCustomValue()} placeholder="Type a value word or phrase here" className="h-11 rounded-xl bg-white" /><Button onClick={addCustomValue} className="h-11 rounded-xl"><Plus className="mr-2 h-4 w-4" />Add value</Button></div></div></CardContent></Card></motion.div>}
+          {step === 1 && <motion.div key="step1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-6"><div><div className="mb-3 flex items-center justify-between gap-4"><div><h3 className="font-semibold text-slate-900">Master word bank</h3><p className="text-sm text-slate-500">Click every word that resonates with you.</p></div><Badge variant="secondary" className="rounded-full px-3 py-1">{selected.length} selected</Badge></div><div className="flex flex-wrap gap-2">{MASTER_VALUES.map((value) => <ValueChip key={value} label={value} active={selected.includes(value)} onClick={() => toggleSelected(value)} />)}{selected.filter((value) => !MASTER_VALUES.includes(value)).map((value) => <ValueChip key={value} label={value} active onClick={() => toggleSelected(value)} />)}</div></div><div className="rounded-2xl border bg-slate-50 p-4"><div className="mb-3"><h3 className="font-semibold text-slate-900">Write your own value</h3><p className="text-sm text-slate-500">Add a word or phrase that is not already in the word bank.</p></div><div className="flex flex-col gap-3 sm:flex-row"><Input value={customValue} onChange={(e) => setCustomValue(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addCustomValue()} placeholder="Type a value word or phrase here" className="h-11 rounded-xl bg-white" /><Button onClick={addCustomValue} className="h-11 rounded-xl"><Plus className="mr-2 h-4 w-4" />Add value</Button></div></div></CardContent></Card></motion.div>}
 
           {step === 2 && <motion.div key="step2" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-5"><div className="grid gap-4 md:grid-cols-2"><div className="rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-800">Aim to keep about half of your original list. With {selected.length} initial selections, that means aiming for about <strong>{halfTarget}</strong> words remaining.</div><div className="rounded-2xl bg-slate-50 p-4 text-sm italic text-slate-700">“If everything is important, then nothing is.” — Patrick M. Lencioni</div></div><div className="grid gap-4 md:grid-cols-2"><Column title={`Keep for now (${step2Keep.length})`} description="These still feel especially meaningful." items={step2Keep} onDropItem={moveToKeep} onItemClick={moveToSetAside} emptyText="Drop values here that you want to keep." variant="primary" /><Column title={`Set aside (${step2SetAside.length})`} description="These matter, but not as strongly as the others." items={step2SetAside} onDropItem={moveToSetAside} onItemClick={moveToKeep} emptyText="Drop less resonant values here." variant="secondary" /></div></CardContent></Card></motion.div>}
 
-          {effectiveStep === 3 && <motion.div key="step3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-5"><div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-600">Select the words that still feel most central.</span><Badge className="rounded-full px-3 py-1">{top10.length} chosen</Badge></div><div className="flex flex-wrap gap-2">{step2Keep.map((value) => <ValueChip key={value} label={value} active={top10.includes(value)} onClick={() => toggleTop10(value)} />)}</div></CardContent></Card></motion.div>}
+          {effectiveStep === 3 && <motion.div key="step3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-5"><div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-600">Select the words that still feel most central.</span><Badge variant="secondary" className="rounded-full px-3 py-1">{top10.length} chosen</Badge></div><div className="flex flex-wrap gap-2">{step2Keep.map((value) => <ValueChip key={value} label={value} active={top10.includes(value)} onClick={() => toggleTop10(value)} />)}</div></CardContent></Card></motion.div>}
 
-          {effectiveStep === 4 && <motion.div key="step4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-5"><div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-600">Choose exactly five values that most consistently show up in your life.</span><Badge className="rounded-full px-3 py-1">{top5.length} chosen</Badge></div><div className="flex flex-wrap gap-2">{top10.map((value) => <ValueChip key={value} label={value} active={top5.includes(value)} onClick={() => toggleTop5(value)} />)}</div></CardContent></Card></motion.div>}
+          {effectiveStep === 4 && <motion.div key="step4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-5"><div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-600">Choose exactly five values that most consistently show up in your life.</span><Badge variant="secondary" className="rounded-full px-3 py-1">{top5.length} chosen</Badge></div><div className="flex flex-wrap gap-2">{top10.map((value) => <ValueChip key={value} label={value} active={top5.includes(value)} onClick={() => toggleTop5(value)} />)}</div></CardContent></Card></motion.div>}
 
-          {effectiveStep === 5 && <motion.div key="step5" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-6"><div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-600">Choose exactly three words that best capture your present sense of calling and design.</span><Badge className="rounded-full px-3 py-1">{top3.length} selected</Badge></div><div className="flex flex-wrap gap-2">{top5.map((value) => <ValueChip key={value} label={value} active={top3.includes(value)} onClick={() => toggleTop3(value)} />)}</div><Separator /><div className="rounded-3xl bg-slate-900 p-6 text-white"><div className="mb-2 text-sm uppercase tracking-[0.2em] text-slate-300">Reflection</div><h3 className="text-2xl font-semibold">Your current reflection words</h3><div className="mt-4 flex flex-wrap gap-3">{top3.length > 0 ? top3.map((item, index) => <div key={item} className="rounded-full bg-white/10 px-4 py-2 text-base backdrop-blur">{index + 1}. {item}</div>) : <p className="text-slate-300">Your selected words will appear here once chosen.</p>}</div>{top3.length === 3 && (
+          {effectiveStep === 5 && <motion.div key="step5" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}><Card className="rounded-3xl border-0 shadow-lg shadow-slate-200/60"><CardHeader><CardTitle>{currentStep?.title}</CardTitle><CardDescription>{currentStep?.subtitle}</CardDescription></CardHeader><CardContent className="space-y-6"><div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-600">Choose exactly three words that best capture your present sense of calling and design.</span><Badge variant="secondary" className="rounded-full px-3 py-1">{top3.length} selected</Badge></div><div className="flex flex-wrap gap-2">{top5.map((value) => <ValueChip key={value} label={value} active={top3.includes(value)} onClick={() => toggleTop3(value)} />)}</div><Separator /><div className="rounded-3xl bg-slate-900 p-6 text-white"><div className="mb-2 text-sm uppercase tracking-[0.2em] text-slate-300">Reflection</div><h3 className="text-2xl font-semibold">Your current reflection words</h3><div className="mt-4 flex flex-wrap gap-3">{top3.length > 0 ? top3.map((item, index) => <div key={item} className="rounded-full bg-white/10 px-4 py-2 text-base backdrop-blur">{index + 1}. {item}</div>) : <p className="text-slate-300">Your selected words will appear here once chosen.</p>}</div>{top3.length === 3 && (
                 <div className="mt-6 space-y-4">
-                  <div className="rounded-2xl bg-white/10 p-4 text-sm leading-6 text-slate-100">Take your three values to ChatGPT to explore what they might reveal about how God has wired you.</div>
-                  <Button onClick={() => window.open(buildChatGPTLink(), '_blank')} className="rounded-xl bg-white text-slate-900 hover:bg-slate-100">Generate Reflection with ChatGPT</Button>
+                  <div className="rounded-2xl bg-white/10 p-4 text-sm leading-6 text-slate-100">
+                    Take your three values to ChatGPT to explore what they might reveal about how God has wired you.
+                  </div>
+                  <Button
+                    onClick={() => window.open(buildChatGPTLink(), '_blank')}
+                    className="rounded-xl bg-white text-slate-900 hover:bg-slate-100"
+                  >
+                    Generate Reflection with ChatGPT
+                  </Button>
                 </div>
               )}
-              <div className="mt-4 text-sm italic text-slate-300">“The place God calls you to is the place where your deep gladness and the world’s deep hunger meet.” — Frederick Buechner</div><div className="mt-6 flex flex-wrap gap-3"><Button onClick={downloadResults} variant="secondary" className="rounded-xl"><Download className="mr-2 h-4 w-4" />Download results</Button><Button onClick={() => window.print()} className="rounded-xl bg-white text-slate-900 hover:bg-slate-100">Print / Save PDF</Button><Button onClick={resetAll} className="rounded-xl bg-white text-slate-900 hover:bg-slate-100">Start the Exercise</Button><Button onClick={() => { navigator.clipboard.writeText(window.location.href); alert('Link copied. Share it with a friend!'); }} className="rounded-xl bg-white text-slate-900 hover:bg-slate-100">Share this with a friend</Button></div></div></CardContent></Card></motion.div>}
+              <div className="mt-4 text-sm italic text-slate-300">“The place God calls you to is the place where your deep gladness and the world’s deep hunger meet.” — Frederick Buechner</div><div className="mt-6 flex flex-wrap gap-3"><Button onClick={downloadResults} variant="secondary" className="rounded-xl"><Download className="mr-2 h-4 w-4" />Download results</Button><Button onClick={() => window.print()} className="rounded-xl bg-white text-slate-900 hover:bg-slate-100">Print / Save PDF</Button><Button onClick={resetAll} className="rounded-xl bg-white text-slate-900 hover:bg-slate-100">Start the Exercise</Button><Button onClick={() => {navigator.clipboard.writeText(window.location.href); alert('Link copied. Share it with a friend!');}} className="rounded-xl bg-white text-slate-900 hover:bg-slate-100">Share this with a friend</Button></div></div></CardContent></Card></motion.div>}
         </AnimatePresence>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
