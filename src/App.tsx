@@ -52,20 +52,25 @@ function titleCase(value: string) {
     .join(" ");
 }
 
-function ValueChip({ label, active, onClick, draggable = false, onDragStart }: { label: string; active?: boolean; onClick: () => void; draggable?: boolean; onDragStart?: (e: React.DragEvent<HTMLButtonElement>) => void; }) {
+function ValueChip({ label, active, onClick, draggable = false, onDragStart }) {
   return (
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      draggable={draggable}
-      onDragStart={onDragStart}
-      onClick={onClick}
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-all ${active ? "border-slate-900 bg-slate-900 text-white shadow" : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"}`}
-    >
-      {draggable && <GripVertical className="h-3.5 w-3.5 opacity-70" />}
-      <span>{label}</span>
-      {active && <Check className="h-3.5 w-3.5" />}
-    </motion.button>
+    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="inline-block">
+      <button
+        type="button"
+        draggable={draggable}
+        onDragStart={onDragStart}
+        onClick={onClick}
+        className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-all ${
+          active
+            ? "border-slate-900 bg-slate-900 text-white shadow"
+            : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"
+        }`}
+      >
+        {draggable && <GripVertical className="h-3.5 w-3.5 opacity-70" />}
+        <span>{label}</span>
+        {active && <Check className="h-3.5 w-3.5" />}
+      </button>
+    </motion.div>
   );
 }
 
