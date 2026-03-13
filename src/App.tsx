@@ -88,22 +88,59 @@ function ValueChip({
   );
 }
 
-function Column({ title, description, items, onDropItem, onItemClick, emptyText, variant = "primary" }: { title: string; description: string; items: string[]; onDropItem: (item: string) => void; onItemClick: (item: string) => void; emptyText: string; variant?: "primary" | "secondary"; }) {
+function Column({
+  title,
+  description,
+  items,
+  onDropItem,
+  onItemClick,
+  emptyText,
+  variant = "primary",
+}: {
+  title: string;
+  description: string;
+  items: string[];
+  onDropItem: (item: string) => void;
+  onItemClick: (item: string) => void;
+  emptyText: string;
+  variant?: "primary" | "secondary";
+}) {
   return (
     <div
-   <div
-  onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
-  onDrop={(e: React.DragEvent<HTMLDivElement>) => {
-    const value = e.dataTransfer.getData("text/plain");
-    if (value) onDropItem(value);
-  }}
-  className={`min-h-[220px] rounded-2xl border p-4 ${variant === "primary" ? "border-slate-300 bg-white" : "border-dashed border-slate-300 bg-slate-50"}`}
->
+      onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+      onDrop={(e: React.DragEvent<HTMLDivElement>) => {
+        const value = e.dataTransfer.getData("text/plain");
+        if (value) onDropItem(value);
+      }}
+      className={`min-h-[220px] rounded-2xl border p-4 ${
+        variant === "primary"
+          ? "border-slate-300 bg-white"
+          : "border-dashed border-slate-300 bg-slate-50"
+      }`}
+    >
       <div className="mb-3">
         <h3 className="text-base font-semibold text-slate-900">{title}</h3>
         <p className="text-sm text-slate-500">{description}</p>
       </div>
-      {items.length === 0 ? <div className="rounded-xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-400">{emptyText}</div> : <div className="flex flex-wrap gap-2">{items.map((item) => <ValueChip key={item} label={item} draggable onDragStart={(e: React.DragEvent<HTMLButtonElement>) => e.dataTransfer.setData("text/plain", item)} onClick={() => onItemClick(item)} />)}</div>}
+      {items.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-400">
+          {emptyText}
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {items.map((item) => (
+            <ValueChip
+              key={item}
+              label={item}
+              draggable
+              onDragStart={(e: React.DragEvent<HTMLButtonElement>) =>
+                e.dataTransfer.setData("text/plain", item)
+              }
+              onClick={() => onItemClick(item)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
