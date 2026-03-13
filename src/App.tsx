@@ -88,6 +88,16 @@ function ValueChip({
   );
 }
 
+type ColumnProps = {
+  title: string;
+  description: string;
+  items: string[];
+  onDropItem: (item: string) => void;
+  onItemClick: (item: string) => void;
+  emptyText: string;
+  variant?: "primary" | "secondary";
+};
+
 function Column({
   title,
   description,
@@ -96,15 +106,7 @@ function Column({
   onItemClick,
   emptyText,
   variant = "primary",
-}: {
-  title: string;
-  description: string;
-  items: string[];
-  onDropItem: (item: string) => void;
-  onItemClick: (item: string) => void;
-  emptyText: string;
-  variant?: "primary" | "secondary";
-}) {
+}: ColumnProps) {
   return (
     <div
       onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
